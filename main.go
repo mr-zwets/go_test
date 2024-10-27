@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"log"
 
 	"golang.org/x/crypto/ripemd160"
 )
@@ -44,13 +43,13 @@ func convertPk() {
 	fmt.Print("Enter a public key: ")
 	fmt.Scanln(&pubkey)
 
-	// Convert the hexadecimal string to bytes
-	inputBytes, err := hex.DecodeString(pubkey)
-	if err != nil {
-		log.Fatalf("Failed to decode hex string: %v", err)
+	if !validatePubKey(pubkey) {
+		fmt.Println("Invalid public key format.")
+		return
 	}
 
-	// Perform Hash160 (SHA-256 + RIPEMD-160)
+	// Convert the hexadecimal string to bytes & perform Hash160
+	inputBytes, _ := hex.DecodeString(pubkey)
 	hash160Result := hash160(inputBytes)
 
 	// Convert the result back to a hexadecimal string
@@ -70,10 +69,8 @@ func convertPkh() {
 		fmt.Print("Enter a public key hash: ")
 		fmt.Scanln(&pkh)
 
-		// check length of pkh
-		pkhLength := len(pkh)
-		if pkhLength != 40 {
-			fmt.Println("Invalid input. Please enter a valid number.")
+		if !validatePubKeyHash(pkh) {
+			fmt.Println("Invalid publickeyhash format.")
 		} else {
 			break // Exit the loop if the input is valid
 		}
